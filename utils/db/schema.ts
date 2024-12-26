@@ -16,7 +16,7 @@ export const Reports = pgTable('reports',{
     imageUrl:text('image_url'),
     verifycationResult:jsonb('verification_result'),
     status:varchar('status',{length:255}).notNull().default('pending'),
-    createdAlt:timestamp('created_at').defaultNow().notNull(),
+    createdAt:timestamp('created_at').defaultNow().notNull(),
     collectorId:integer('collector_id').references(()=>Users.id),
 })
 
