@@ -66,7 +66,7 @@ export default function CollectPage(){
       quantityMatch: boolean;
       confidence: number;
     } | null>(null)
-    const [reward, setReward] = useState<number | null>(null);
+    const [ setReward] = useState<number | null>(null);
     const handleStatusChange = async (taskId: number, newStatus: CollectionTask['status']) => {
         if (!user) {
           toast.error('Please log in to collect waste.')
