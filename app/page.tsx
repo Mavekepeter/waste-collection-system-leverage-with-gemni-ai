@@ -1,6 +1,5 @@
-import { Leaf,ArrowRight,Recycle,User,Coins,MapPin,ChevronRight,Users } from "lucide-react";
+import { Leaf,Recycle,Coins,MapPin,Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from 'next/link'
 import React from "react";
 
 function AnimatedGlobe(){
@@ -21,7 +20,7 @@ export default function Home(){
       <section className="text-center mb-20">
         <AnimatedGlobe/>
         <h1 className="text-6xl font-bold mb-6 text-gray-800 tracking-tight">
-          zero-to-Hero <span className="text-green-600">Waste management</span>
+          SamSyncSolution <span className="text-green-600">Waste management</span>
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
           Join our community in making waste management more efficient and rewarding

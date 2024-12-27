@@ -32,7 +32,7 @@ export const Rewards = pgTable('reward',{
     collectionInfo:text('collection_info').notNull(),
 
 })
-export const CollectedWaste = pgTable('collected_waste',{
+export const CollectedWastes = pgTable('collected_waste',{
     id:serial('id').primaryKey(),
     reportId:integer('report_id').references(()=>Reports.id).notNull(),
     collectorId:integer('collector_id').references(()=>Users.id).notNull(),

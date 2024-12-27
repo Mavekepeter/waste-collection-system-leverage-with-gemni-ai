@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from "lucide-react";
 import { db } from "./dbConfig";
-import {Notifications, Transactions, Users,Reports,Rewards} from "./schema"
+import {Notifications, Transactions, Users,Reports,Rewards,CollectedWastes} from "./schema"
 import {eq,sql,and,desc} from 'drizzle-orm'
 import { tree } from "next/dist/build/templates/app-page";
 
@@ -221,6 +221,113 @@ export async function createReport(
       return allRewards;
     } catch (error) {
       console.error("Error fetching available rewards:", error);
+      return [];
+    }
+  }
+
+  export async function getWasteCollectionTasks(limit: number = 20) {
+    try {
+      const tasks = await db
+        .select({
+          id: Reports.id,
+          location: Reports.location,
+          wasteType: Reports.wasteType,
+          amount: Reports.amount,
+          status: Reports.status,
+          date: Reports.createdAt,
+          collectorId: Reports.collectorId,
+        })
+        .from(Reports)
+        .limit(limit)
+        .execute();
+  
+      return tasks.map(task => ({
+        ...task,
+        date: task.date.toISOString().split('T')[0], // Format date as YYYY-MM-DD
+      }));
+    } catch (error) {
+      console.error("Error fetching waste collection tasks:", error);
+      return [];
+    }
+  }
+  export async function updateTaskStatus(reportId: number, newStatus: string, collectorId?: number) {
+    try {
+      const updateData: any = { status: newStatus };
+      if (collectorId !== undefined) {
+        updateData.collectorId = collectorId;
+      }
+      const [updatedReport] = await db
+        .update(Reports)
+        .set(updateData)
+        .where(eq(Reports.id, reportId))
+        .returning()
+        .execute();
+      return updatedReport;
+    } catch (error) {
+      console.error("Error updating task status:", error);
+      throw error;
+    }
+  }
+
+  export async function saveReward(userId:any,amount:number){
+    try {
+        const [reward] = await db.insert(Rewards).values({
+            userId,
+            name:'Waste collection reward',
+            collectionInfo: 'Points earned from waste collection',
+            points:amount,
+            level:1,
+            isAvailable:true,
+        })
+        .returning()
+        .execute();
+    
+        await createTransaction(userId,'earned_collect',amount,'Points earned for collecting waste')
+    
+    } catch (error) {
+        console.error('Error saving reward:',error);
+        throw error;
+    }
+    
+  }
+  
+  export async function saveCollectedWaste(reportId: number, collectorId: number, verificationResult: any) {
+    try {
+      const [collectedWaste] = await db
+        .insert(CollectedWastes)
+        .values({
+          reportId,
+          collectorId,
+          collectionDate: new Date(),
+          status: 'verified',
+        })
+        .returning()
+        .execute();
+      return collectedWaste;
+    } catch (error) {
+      console.error("Error saving collected waste:", error);
+      throw error;
+    }
+  }
+  export async function getAllRewards() {
+    try {
+      const rewards = await db
+        .select({
+          id: Rewards.id,
+          userId: Rewards.userId,
+          points: Rewards.point,
+          level: Rewards.level,
+          createdAt: Rewards.createdAt,
+          userName: Users.name,
+        })
+        .from(Rewards)
+        .leftJoin(Users, eq(Rewards.userId, Users.id))
+        .orderBy(desc(Rewards.point))
+        .execute();
+  
+      return rewards;
+    } catch (error) {
+      console.error("Error fetching all rewards:", error);
       return [];
     }
   }

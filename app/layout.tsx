@@ -3,7 +3,7 @@ import { useState,useEffect } from "react"
 import {Inter} from 'next/font/google'
 import './globals.css'
 
-import {Toast, Toaster} from 'react-hot-toast'
+import { Toaster} from 'react-hot-toast'
 import Header from "@/components/Header"
 import Sidebar from "@/components/Sidebar"
 import { getAvailableRewards, getUserByEmail } from "@/utils/db/actions"
